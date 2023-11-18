@@ -8,11 +8,17 @@ from recipes import Recipes
 from allergen import Allergen
 from dislike import Dislike
 
+from recommendation.recommendation import Recommendation
+from recommendation.recipe_dataset import RecipeDataset
+
 # Load recipes from JSON
 recipes = None
 with open('../data/recipes_10k.json', 'r') as f:
     json_dict = json.load(f)
     recipes = Recipes(json_dict)
+
+recipe_dataset = RecipeDataset('../data/recipes_10k.pkl')
+recommender = Recommendation(recipe_dataset)
 
 app = FastAPI(swagger_ui_parameters={})
 
@@ -57,7 +63,7 @@ def get_ingredients() -> list[Dislike]:
 @app.get('/ratingRecipes')
 def get_rating_recipes() -> list[Recipe]:
     # TODO: Improve sampling for good coverage
-    return [recipes.get_recipe(random.randrange(recipes.count())) for i in range(10)]
+    return [recipes.get_recipe_by_name(n) for n in recommender.get_representative_samples(10)]
 
 @app.post('/ratings')
 def post_rating(req: list[RatingRequest]) -> ResultResponse:

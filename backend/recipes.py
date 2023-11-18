@@ -29,6 +29,11 @@ class Recipes:
                 allergens=allergens,
             )
 
+    def get_recipe_by_name(self, name):
+        for i,r in enumerate(self.recipes):
+            if r['name'].lower() == name.lower():
+                return self.get_recipe(i)
+
     def get_allergens(self):
         return self.allergens
 
