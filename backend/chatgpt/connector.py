@@ -11,7 +11,7 @@ class ChatGPTConnector():
         completion = self.client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Your are part of a recommendation system for recipes. Your task is to select tags describing recipes matching the user's prompt from the following comma-separated list: " + ','.join(TAGS) + ". Respond in exactly the following format: \"tag1, tag2, tag3\""},
+            {"role": "system", "content": "Your are part of a recommendation system for recipes. Your task is to select tags describing recipes matching the user's prompt from the following comma-separated list: " + ','.join(TAGS) + ". Respond in exactly the following format: \"tag1, tag2, tag3\". You are allowed to respond with zero to five tags."},
             {"role": "user", "content": prompt}
           ]
         )
