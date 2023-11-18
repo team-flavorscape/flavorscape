@@ -13,7 +13,7 @@ class Recommendation:
 
     def get_representative_samples(self, num_samples):
         X = self.recipe_dataset.reduced_data_pd.to_numpy()
-        kmeans = KMeans(n_clusters=num_samples, random_state=0, n_init="auto").fit(X)
+        kmeans = KMeans(n_clusters=num_samples, random_state=None, n_init="auto").fit(X)
 
         representative_samples = []
         for cluster_center in kmeans.cluster_centers_:

@@ -1,7 +1,8 @@
-from recipe import Recipe
-from allergen import Allergen
+from model.recipe import Recipe
+from model.allergen import Allergen
+from model.dislike import Dislike
+
 from dislikes import dislikes
-from dislike import Dislike
 
 IMG_BASE_URL_LARGE='https://img.hellofresh.com/w_1000,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3'
 
@@ -37,5 +38,11 @@ class Recipes:
     def get_allergens(self):
         return self.allergens
 
+    def get_allergen_name(self, id):
+        return self.allergens[id].name
+
     def get_dislikes(self):
         return [Dislike(id=i, name=d.name) for i,d in enumerate(dislikes)]
+
+    def get_dislike_name(self, id):
+        return dislikes[id].name
