@@ -2,6 +2,7 @@ import pandas as pd
 from recipe_dataset import RecipeDataset
 from sklearn.cluster import KMeans
 
+
 class Recommendation:
     def __init__(self, recipe_dataset: RecipeDataset):
         self.recipe_dataset = recipe_dataset
