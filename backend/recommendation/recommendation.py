@@ -1,5 +1,5 @@
 import pandas as pd
-from recipe_dataset import RecipeDataset
+from recommendation.recipe_dataset import RecipeDataset
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsRegressor
 
