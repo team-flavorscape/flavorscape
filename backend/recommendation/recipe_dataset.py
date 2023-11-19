@@ -27,7 +27,7 @@ class RecipeDataset:
         self.reduced_data_pd = None
         self.data_mean = None
         self.data_std = None
-        self.run_dim_reduction(dim_reduction, 25)
+        self.run_dim_reduction(dim_reduction)
 
     def add_ingredient_classes(self):
         self.alias_ingredient_classes = {
@@ -69,14 +69,14 @@ class RecipeDataset:
 
     def filter_out_recipes(self, recipes):
         self.data_pd.drop(recipes)
-        self.run_dim_reduction(self.dim_reduction, self.num_components)
+        self.run_dim_reduction(self.dim_reduction)
 
     def filter_out_empty_and_normalize(self, min_entries_attribute, min_entries_recipe):
         self.data_pd = self.data_pd.drop(self.data_pd.columns[self.data_pd.sum(axis=0) < 2 * min_entries_attribute], axis=1)
         self.data_pd = self.data_pd.drop(self.data_pd.index[self.data_pd.sum(axis=1) < min_entries_recipe], axis=0)
         self.data_pd = self.data_pd.drop(self.data_pd.columns[self.data_pd.sum(axis=0) < min_entries_attribute], axis=1)
 
-    def run_dim_reduction(self, type='pca', importance_multiplier=25):
+    def run_dim_reduction(self, type='pca', importance_multiplier=10):
         self.data_mean = self.data_pd.mean(axis=0)
         self.data_std = self.data_pd.std(axis=0)
 
