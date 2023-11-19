@@ -35,7 +35,6 @@ class Recommendation:
 
 if __name__ == '__main__':
     recipe_dataset = RecipeDataset('/home/aleks/hackatum/flavorscape/data/recipes_10k.pkl',
-                                   drop_std=0.1,
                                    normalize=True,
                                    dim_reduction='pca',
                                    num_components=20)
@@ -43,14 +42,13 @@ if __name__ == '__main__':
     recommendation = Recommendation(recipe_dataset, n_neighbours=5)
     recommendation.add_ratings(pd.Series({'Al Pastor Pork': 1,
                                           'A Caesar Salad to Rule Them All': -1,
-                                          'Apple Crisps': -1,
                                           'Apricot Pork Cutlets': 1,
-                                          'Asian Pork Wraps': 1,
                                           'Asparagus Risotto': -1,
                                           'Pork Fajitas': 1,
                                           'Roasted Veggie Kale Salad': -1}))
 
-    recipes = recipe_dataset.reduced_data_pd.index
+    recipes = list(recipe_dataset.reduced_data_pd.index)
+
     predictions_np = recommendation.get_prediction(recipe_dataset.get_reduced_recipe(recipes).to_numpy())
     result_pd = pd.Series(predictions_np, index=recipes).sort_values(ascending=False)
 

@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 class RecipeDataset:
-    def __init__(self, path_dataset, drop_std=1e-6, normalize=True, dim_reduction='pca', num_components=10):
+    def __init__(self, path_dataset, normalize=True, dim_reduction='pca', num_components=10):
         with open(path_dataset, 'rb') as file:
             self.raw_data_pd = pickle.load(file)
 
@@ -15,8 +15,8 @@ class RecipeDataset:
                             .set_index('index')
                             .sort_index())
 
-        self.data_pd = None
-        self.set_min_std_deviation(std=drop_std)
+        self.data_pd = self.raw_data_pd
+        self.filter_out_empty_recipes_and_attributes(min_entries_attribute=5, min_entries_recipe=10)
 
         self.model = None
         self.reduced_data_pd = None
@@ -24,9 +24,10 @@ class RecipeDataset:
         self.data_std = None
         self.run_dim_reduction(dim_reduction, num_components)
 
-    def set_min_std_deviation(self, std):
-        data_std = self.raw_data_pd.std()
-        self.data_pd = self.raw_data_pd.drop(data_std[data_std < std].index.values, axis=1)
+    def filter_out_empty_recipes_and_attributes(self, min_entries_attribute, min_entries_recipe):
+        self.data_pd = self.data_pd.drop(self.data_pd.columns[self.data_pd.sum(axis=0) < 2 * min_entries_attribute], axis=1)
+        self.data_pd = self.data_pd.drop(self.data_pd.index[self.data_pd.sum(axis=1) < min_entries_recipe], axis=0)
+        self.data_pd = self.data_pd.drop(self.data_pd.columns[self.data_pd.sum(axis=0) < min_entries_attribute], axis=1)
 
     def run_dim_reduction(self, type='pca', num_components=10):
         if type == 'pca':
@@ -76,10 +77,9 @@ class RecipeDataset:
 
 if __name__ == '__main__':
     recipe_dataset = RecipeDataset('/home/aleks/hackatum/flavorscape/data/recipes_10k.pkl',
-                                   drop_std=0.1,
                                    normalize=True,
                                    dim_reduction='pca',
-                                   num_components=10)
+                                   num_components=20)
 
     recipe_name = 'Thai Ginger Curry'
     recipe = recipe_dataset.get_recipe(recipe_name)
