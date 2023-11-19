@@ -73,7 +73,9 @@ class _MealPlanner extends State<MealPlanner> {
   @override
   void initState() {
     super.initState();
-    fetchRecommendedRecipes();
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      fetchRecommendedRecipes();
+    });
   }
 
   Widget getSwipeCard(Recipe recipe, BuildContext context) {
