@@ -1,7 +1,9 @@
 import pandas as pd
-from recommendation.recipe_dataset import RecipeDataset
+from recipe_dataset import RecipeDataset
 from sklearn.cluster import KMeans
-from sklearn.neighbors import KNeighborsRegressor
+
+#from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
 
 
 class Recommendation:
@@ -9,7 +11,8 @@ class Recommendation:
         self.recipe_dataset = recipe_dataset
 
         self.ratings = pd.Series()
-        self.model = KNeighborsRegressor(n_neighbors=n_neighbours, weights='distance')
+        #self.model = KNeighborsRegressor(n_neighbors=n_neighbours, weights='distance')
+        self.model = RandomForestRegressor(max_depth=5, random_state=0)
 
     def get_representative_samples(self, num_samples):
         X = self.recipe_dataset.reduced_data_pd.to_numpy()
@@ -37,20 +40,41 @@ if __name__ == '__main__':
     recipe_dataset = RecipeDataset('/home/aleks/hackatum/flavorscape/data/recipes_10k.pkl',
                                    normalize=True,
                                    dim_reduction='pca',
-                                   num_components=20)
+                                   num_components=10)
 
     recommendation = Recommendation(recipe_dataset, n_neighbours=5)
-    recommendation.add_ratings(pd.Series({'Al Pastor Pork': 1,
-                                          'A Caesar Salad to Rule Them All': -1,
-                                          'Apricot Pork Cutlets': 1,
-                                          'Asparagus Risotto': -1,
-                                          'Pork Fajitas': 1,
-                                          'Roasted Veggie Kale Salad': -1}))
+
+    #for rec in recommendation.get_representative_samples(num_samples=20):
+    #    print(f'\'{rec}\': ,')
+
+    onboardings = pd.Series({'Barramundi and Scallion Sriracha Pesto':      -1,
+                             'Speedy Steak Fajitas':                        -1,
+                             'Deli-Style Turkey Wraps':                     -1,
+                             'Smoky Apple Chicken':                         -1,
+                             'Creamy Chicken Sausage Tortelloni Limone':    -1,
+                             'Churro Waffle & Bacon Brunch Board':          -1,
+                             'Middle Eastern Steak Bowls':                  -1,
+                             'Sweet & Spicy Pork Noodle Stir-Fry':          -1,
+                             'BBQ Pork Burgers':                            -1,
+                             'One-Pan Moo Shu Pork Bowls':                  -1,
+                             'Zucchini & Sun-Dried Tomato Panini':          1,
+                             'Saucy Thyme Steak':                           -1,
+                             'Crispy Chickpea Tacos':                       1,
+                             'Pork Schnitzel':                              -1,
+                             'Pho-Style Beef Noodle Soup':                  -1,
+                             'Turkey Patties with Smoky Lemon Crema':       -1,
+                             'Fully Loaded Pork Taquitos':                  -1,
+                             'Breakfast Chorizo, Kale, and Tomato Skillet': 1,
+                             'Cauliflower & Chickpea Tikka Masala':         1,
+    })
+
+    recommendation.add_ratings(onboardings)
 
     recipes = list(recipe_dataset.reduced_data_pd.index)
 
     predictions_np = recommendation.get_prediction(recipe_dataset.get_reduced_recipe(recipes).to_numpy())
     result_pd = pd.Series(predictions_np, index=recipes).sort_values(ascending=False)
 
-    print(result_pd)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+        print(result_pd.drop(onboardings.index))
 
