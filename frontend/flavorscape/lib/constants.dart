@@ -1,5 +1,5 @@
 // API
-const String apiAddress = '131.159.223.15:8000';
+const String apiAddress = '131.159.216.235:8000';
 const String onboardCheckPath = '/onboardCheck';
 const String onboardPath = '/onboard';
 const String ingredientsPath = '/ingredients';
